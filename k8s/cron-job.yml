@@ -1,0 +1,67 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: aws-database-backup
+spec:
+  concurrencyPolicy: Allow
+  failedJobsHistoryLimit: 10
+  jobTemplate:
+    metadata:
+    spec:
+      activeDeadlineSeconds: 600
+      backoffLimit: 3
+      completions: 1
+      parallelism: 1
+      template:
+        metadata:
+        spec:
+          containers:
+          - args:
+            - /pgsql-backup.sh
+            command:
+            - /bin/sh
+            env:
+            - name: DB_HOST
+              value: postgres
+            - name: DB_PORT
+              value: "5432"
+            - name: TARGET_DATABASE_NAMES
+              valueFrom:
+                secretKeyRef:
+                  key: POSTGRES_DB
+                  name: postgres-secret
+                  optional: false
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: POSTGRES_PASSWORD
+                  name: postgres-secret
+                  optional: false
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  key: POSTGRES_USER
+                  name: postgres-secret
+                  optional: false
+            envFrom:
+            - secretRef:
+                name: backup-secret
+                optional: false
+            - configMapRef:
+                name: backup-config
+                optional: false
+            - secretRef:
+                name: aws-s3-secret
+                optional: false
+            image: caesarteam/aws-database-backup
+            imagePullPolicy: Always
+            name: aws-database-backup
+          dnsPolicy: ClusterFirst
+          imagePullSecrets:
+          - name: dockerhub
+          restartPolicy: Never
+          schedulerName: default-scheduler
+          securityContext: {}
+          terminationGracePeriodSeconds: 30
+  schedule: 0 01 * * *
+  successfulJobsHistoryLimit: 10
