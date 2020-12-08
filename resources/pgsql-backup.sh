@@ -11,9 +11,9 @@ now="$(getnow)"
 # Loop through all the defined databases, seperating by a ,
 for CURRENT_DATABASE in ${TARGET_DATABASE_NAMES//,/ }
 do
-    filename=${CURRENT_DATABASE}_${now}.sql.tar.gz
+    filename=${CURRENT_DATABASE}_${now}.sqlz 
     # Perform the database backup. Put the output to a variable. If successful upload the backup to S3, if unsuccessful print an entry to the console and the log, and set has_failed to true.
-    if sqloutput=$(pg_dump --dbname=postgresql://"${DB_USER}":"${DB_PASSWORD}"@"${DB_HOST}":"${DB_PORT}"/"${CURRENT_DATABASE}" -F c > /tmp/"${filename}")
+    if sqloutput=$(pg_dump --dbname=postgresql://"${DB_USER}":"${DB_PASSWORD}"@"${DB_HOST}":"${DB_PORT}"/"${CURRENT_DATABASE}" -F c -f /tmp/"${filename}")
     then
         
         echo -e "Database backup successfully completed for ${filename} at $(getnow)."
