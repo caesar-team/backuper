@@ -7,7 +7,7 @@ if [ ! -f "$ENCRYPT_FILE" ]; then
 fi
 
 if [ ! -z "$ENCRYPT_PASS" ] ; then
-    if encoutput=$(openssl enc -aes-256-cbc -salt -in ${ENCRYPT_FILE} -out ${ENCRYPT_FILE}.tmp -k ${ENCRYPT_PASS})
+    if encoutput=$(openssl enc -aes-256-cbc -pbkdf2 -salt -in ${ENCRYPT_FILE} -out ${ENCRYPT_FILE}.tmp -k ${ENCRYPT_PASS})
     then
         rm "$ENCRYPT_FILE"
         mv "${ENCRYPT_FILE}.tmp" $ENCRYPT_FILE
