@@ -29,7 +29,7 @@ do
         fi
 
         # Perform the upload to S3. Put the output to a variable. If successful, print an entry to the console and the log. If unsuccessful, set has_failed to true and print an entry to the console and the log
-        if awsoutput=$(aws s3 cp /tmp/"$filename" s3://"$AWS_BUCKET_NAME""$AWS_BUCKET_BACKUP_PATH"/"${filename}" 2>&1)
+        if awsoutput=$(aws --endpoint-url $AWS_ENDPOINT s3 cp /tmp/"$filename" s3://"$AWS_BUCKET_NAME""$AWS_BUCKET_BACKUP_PATH"/"${filename}" 2>&1)
         then
             echo -e "Database backup successfully uploaded for $CURRENT_DATABASE at $(getnow)."
         else
