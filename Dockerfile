@@ -1,12 +1,7 @@
 # Set the base image
-FROM alpine:3.12
+FROM python:alpine3.12
 
 RUN apk -v --update add \
-        python \
-        py-pip \
-        groff \
-        less \
-        mailcap \
         mariadb-client \
         postgresql \
         openssl \
